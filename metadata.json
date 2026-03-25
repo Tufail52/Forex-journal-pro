@@ -1,0 +1,5 @@
+{
+  "name": "Forex Journal Pro",
+  "description": "Journal de trading Forex multi-compte avec statistiques, graphiques SVG et synchronisation Supabase.",
+  "requestFramePermissions": []
+}
