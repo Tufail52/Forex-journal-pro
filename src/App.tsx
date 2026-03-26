@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, 
   History, 
@@ -218,63 +218,53 @@ export default function App() {
   return (
     <div className="min-h-screen bg-background text-text flex">
       {/* Sidebar */}
-      <aside className="w-72 border-r border-border bg-card flex flex-col fixed h-full z-20">
-        <div className="p-8">
-          <div className="flex items-center gap-3 mb-10">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-primary/30">
-              F
-            </div>
-            <span className="text-xl font-black tracking-tighter uppercase">Forex Journal</span>
+      <aside className="w-20 border-r border-border bg-card flex flex-col items-center py-8 fixed h-full z-20">
+        <div className="flex flex-col items-center w-full">
+          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-primary/30 mb-10">
+            F
           </div>
 
-          <nav className="space-y-1">
+          <nav className="space-y-4 w-full px-2">
             {[
-              { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-              { id: 'history', label: 'Historique', icon: History },
-              { id: 'form', label: 'Nouveau Trade', icon: PlusCircle },
-              { id: 'settings', label: 'Paramètres', icon: Settings },
+              { id: 'dashboard', label: 'Dash', icon: LayoutDashboard },
+              { id: 'history', label: 'Hist', icon: History },
+              { id: 'form', label: 'New', icon: PlusCircle },
+              { id: 'settings', label: 'Set', icon: Settings },
             ].map(item => (
               <button
                 key={item.id}
                 onClick={() => setView(item.id as any)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${view === item.id ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-muted hover:bg-border/50'}`}
+                className={`w-full flex flex-col items-center gap-1 py-3 rounded-xl font-bold transition-all ${view === item.id ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-muted hover:bg-border/50'}`}
               >
-                <item.icon size={20} />
-                {item.label}
+                <item.icon size={22} />
+                <span className="text-[10px] uppercase tracking-tighter">{item.label}</span>
               </button>
             ))}
           </nav>
         </div>
 
-        <div className="mt-auto p-8 space-y-6">
-          <div className="space-y-3">
-            <h3 className="text-[10px] font-black uppercase text-text-muted tracking-widest px-4">Mes Journaux</h3>
-            <div className="space-y-1">
-              {JOURNALS.map(j => (
-                <button
-                  key={j.id}
-                  onClick={() => setActiveJournal(j)}
-                  className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-bold transition-all ${activeJournal.id === j.id ? 'bg-border text-text' : 'text-text-muted hover:text-text'}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: j.color }} />
-                    {j.name}
-                  </div>
-                  {activeJournal.id === j.id && <ChevronRight size={14} />}
-                </button>
-              ))}
-            </div>
+        <div className="mt-auto flex flex-col items-center gap-6 w-full px-2">
+          <div className="flex flex-col items-center gap-2">
+            {JOURNALS.map(j => (
+              <button
+                key={j.id}
+                onClick={() => setActiveJournal(j)}
+                className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${activeJournal.id === j.id ? 'bg-border ring-2 ring-primary ring-offset-2 ring-offset-card' : 'hover:bg-border/50'}`}
+                title={j.name}
+              >
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: j.color }} />
+              </button>
+            ))}
           </div>
 
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-danger font-bold hover:bg-danger/5 rounded-xl transition-all">
-            <LogOut size={20} />
-            Déconnexion
+          <button className="p-3 text-danger hover:bg-danger/10 rounded-xl transition-all" title="Déconnexion">
+            <LogOut size={22} />
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-72 p-12 min-h-screen">
+      <main className="flex-1 ml-20 p-8 md:p-12 min-h-screen">
         {isLoading ? (
           <div className="h-full flex flex-col items-center justify-center text-text-muted gap-4">
             <RefreshCw size={40} className="animate-spin text-primary" />
