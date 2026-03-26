@@ -116,10 +116,10 @@ app.post("/api/sheets/create", async (req, res) => {
     const spreadsheetId = response.data.spreadsheetId!;
     await sheets.spreadsheets.values.update({
       spreadsheetId,
-      range: "Trades!A1:L1",
+      range: "Trades!A1:N1",
       valueInputOption: "RAW",
       requestBody: {
-        values: [["ID", "Pair", "Direction", "Entry Date", "Exit Date", "Risk %", "PnL %", "PnL $", "Strategy", "Session", "Notes", "Emotion"]],
+        values: [["ID", "Pair", "Direction", "Entry Date", "Exit Date", "Risk %", "PnL %", "PnL $", "Strategy", "Session", "Notes", "Emotion", "Confluences", "Screenshots"]],
       },
     });
 
@@ -147,12 +147,14 @@ app.put("/api/trades", async (req, res) => {
       const values = tradeList.map((t: any) => [
         t.id, t.pair, t.direction, t.entryDate, t.exitDate, 
         t.riskPercent, t.pnlPercent, t.pnlAmount, t.strategy, 
-        t.session, t.notes, t.emotion
+        t.session, t.notes, t.emotion,
+        JSON.stringify(t.confluences || []),
+        JSON.stringify(t.screenshots || [])
       ]);
 
       await sheets.spreadsheets.values.update({
         spreadsheetId: spreadsheetId as string,
-        range: `Trades!A2:L${tradeList.length + 1}`,
+        range: `Trades!A2:N${tradeList.length + 1}`,
         valueInputOption: "RAW",
         requestBody: { values },
       });
@@ -173,7 +175,7 @@ app.get("/api/trades", async (req, res) => {
     const sheets = await getSheetsClient(req.session.tokens);
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: spreadsheetId as string,
-      range: "Trades!A2:L1000",
+      range: "Trades!A2:N1000",
     });
     
     const rows = response.data.values || [];
@@ -190,8 +192,8 @@ app.get("/api/trades", async (req, res) => {
       session: row[9],
       notes: row[10],
       emotion: row[11],
-      confluences: [], // Confluences are tricky in sheets, maybe store as JSON or separate columns
-      screenshots: []
+      confluences: row[12] ? JSON.parse(row[12]) : [],
+      screenshots: row[13] ? JSON.parse(row[13]) : []
     }));
     
     res.json(trades);
@@ -224,7 +226,9 @@ app.post("/api/trades", async (req, res) => {
           trade.strategy,
           trade.session,
           trade.notes,
-          trade.emotion
+          trade.emotion,
+          JSON.stringify(trade.confluences || []),
+          JSON.stringify(trade.screenshots || [])
         ]],
       },
     });
